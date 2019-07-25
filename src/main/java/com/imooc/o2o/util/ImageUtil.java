@@ -9,6 +9,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -40,15 +41,16 @@ public class ImageUtil {
 
     /**
      * 处理缩略图，并返回新生成图片的相对值路径
-     * @param thumbnail 用户传送的文件流
+     * @param thumbnailInputStream 用户传送的文件流
+     * @param fileName
      * @param targetAddr 新文件存储路径
      * @return
      */
-    public static String generateThumbnail(File thumbnail, String targetAddr){
+    public static String generateThumbnail(InputStream thumbnailInputStream,String fileName,String targetAddr){
         //获取文件的随机名
         String realFileName = getRandomFileName();
         //获取用户上传的图片的扩展名 例如：jpg png
-        String extension = getFileExtension(thumbnail);
+        String extension = getFileExtension(fileName);
         //创建目录
         makeDirPath(targetAddr);
         //获取相对路径
@@ -57,7 +59,7 @@ public class ImageUtil {
         File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
         logger.debug("current complete addr is:" + PathUtil.getImgBasePath() + relativeAddr);
         try{
-            Thumbnails.of(thumbnail).size(200,200)
+            Thumbnails.of(thumbnailInputStream).size(200,200)
                     .watermark(Positions.BOTTOM_RIGHT,ImageIO.read(new File(basePath + "/watermark.jpg")),0.25f)
                     .outputQuality(0.8f).toFile(dest);
         }catch (IOException e){
@@ -83,12 +85,11 @@ public class ImageUtil {
 
     /**
      * 获取输入文件流的扩展名
-     * @param cFi
+     * @param fileName
      * @return
      */
-    private static String getFileExtension(File cFi){
-        String originalFileName = cFi.getName();
-        return originalFileName.substring(originalFileName.lastIndexOf("."));
+    private static String getFileExtension(String fileName){
+        return fileName.substring(fileName.lastIndexOf("."));
     }
 
     /**
