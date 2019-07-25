@@ -71,7 +71,7 @@ public class ImageUtil {
      * 生成随机文件名，当前年月日小时分钟秒钟+五位随机数
      * @return
      */
-    private static String getRandomFileName(){
+    public static String getRandomFileName(){
         //获取随机的五位数
         // nextInt(89999), 在0到89999之间取值
         //10000 < rannum < 99999
